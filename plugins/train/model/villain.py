@@ -18,7 +18,7 @@ class Model(OriginalModel):
                      self.__class__.__name__, args, kwargs)
 
         self.configfile = kwargs.get("configfile", None)
-        kwargs["input_shape"] = (128, 128, 3)
+        kwargs["input_shape"] = (256, 256, 3)
         kwargs["encoder_dim"] = 512 if self.config["lowmem"] else 1024
         self.kernel_initializer = RandomNormal(0, 0.02)
 
@@ -38,7 +38,7 @@ class Model(OriginalModel):
         tmp_x = var_x
         res_cycles = 8 if self.config.get("lowmem", False) else 16
         for _ in range(res_cycles):
-            nn_x = self.blocks.res_block(var_x, 128, **kwargs)
+            nn_x = self.blocks.res_block(var_x, in_conv_filters, **kwargs)
             var_x = nn_x
         # consider adding scale before this layer to scale the residual chain
         var_x = add([var_x, tmp_x])
